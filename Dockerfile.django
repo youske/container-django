@@ -1,0 +1,46 @@
+FROM amazonlinux:2
+RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags \
+    gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel sqlite-devel && \
+    groupadd appcreators && groupadd appadmin
+
+RUN adduser admin -g appadmin -g appcreators && \
+    adduser appuser -g appcreators && \
+    echo "%appcreators ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/appcreators
+
+## confd
+RUN mkdir -p /etc/confd/{conf.d,templates} && \
+    wget https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64 -O /usr/local/bin/confd && \
+    chmod +x /usr/local/bin/confd
+
+COPY *.toml /etc/confd/conf.d/
+COPY *.tmpl /etc/confd/templates/
+
+### worrking dir
+RUN mkdir -p /work && chown admin:appcreators /work && chmod g+rwx /work
+
+WORKDIR /tmp
+
+# SQLite3を最新化する
+# ソースを取得 (ホームディレクトリで実行してます)
+RUN wget https://www.sqlite.org/2019/sqlite-autoconf-3280000.tar.gz && \
+    tar xvfz sqlite-autoconf-3280000.tar.gz && \
+    cd sqlite-autoconf-3280000 && \
+    ./configure --prefix=/usr/local && \
+    make && sudo make install && sudo find /usr/ -name sqlite3
+
+
+USER admin
+ADD pyenv.exports /home/admin/.pyenv.exports
+RUN git clone https://github.com/yyuu/pyenv.git ~/.pyenv && \
+  sudo chown admin:appcreators /home/admin/.pyenv.exports && \
+  echo "source ~/.pyenv.exports" >> /home/admin/.bash_profile
+
+
+USER appuser
+ADD pyenv.exports /home/appuser/.pyenv.exports
+RUN git clone https://github.com/yyuu/pyenv.git ~/.pyenv && \
+  sudo chown appuser:appcreators /home/appuser/.pyenv.exports && \
+  echo "source ~/.pyenv.exports" >> /home/appuser/.bash_profile
+
+USER root
+WORKDIR /work

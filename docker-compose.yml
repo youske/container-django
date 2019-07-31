@@ -1,0 +1,22 @@
+version: "3.5"
+services:
+  django:
+    container_name: django
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    environment:
+      - "TZ=Asia/Tokyo"
+      - "TEST_ENV=1"
+    command: confd -backend env
+    volumes:
+      - "workdir:/work:rw"
+    networks:
+      - default
+
+volumes:
+  workdir:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/work
+      o: bind
