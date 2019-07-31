@@ -8,7 +8,6 @@ services:
     environment:
       - "TZ=Asia/Tokyo"
       - "TEST_ENV=1"
-    command: confd -backend env
     volumes:
       - "workdir:/work:rw"
     networks:
