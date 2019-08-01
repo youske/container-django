@@ -10,12 +10,45 @@ services:
       - "TEST_ENV=1"
     volumes:
       - "workdir:/work:rw"
+    ports:
+      - 8000:8000
     networks:
       - default
+
+  mariadb:
+    #container_name: mariadb
+    image: mariadb
+    #restart: always
+    environment:
+      #COMPOSE_CONVERT_WINDOWS_PATHS: 1
+      MYSQL_ROOT_PASSWORD: mysecrethoge
+      #MYSQL_USER: dbuser
+      #MYSQL_PASSWORD: dbuser
+      #MYSQL_DATABASE: store
+    #volumes:
+    #  - ./conf.d/:/etc/mysql/conf.d
+    #  - ./initdb/:/docker-entrypoint-initdb.d
+    #- datastore:/var/lib/mariadb
+    ports:
+      - "23306:3306"
+    networks:
+      - default
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
 
 volumes:
   workdir:
     driver_opts:
       type: none
       device: /c/Users/$USERNAME/volumes/work
+      o: bind
+  datastore:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/datastore
       o: bind
