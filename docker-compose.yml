@@ -16,19 +16,20 @@ services:
       - default
 
   mariadb:
-    #container_name: mariadb
+    container_name: mariadb
     image: mariadb
-    #restart: always
+    restart: always
     environment:
-      #COMPOSE_CONVERT_WINDOWS_PATHS: 1
+      COMPOSE_CONVERT_WINDOWS_PATHS: 1
       MYSQL_ROOT_PASSWORD: mysecrethoge
-      #MYSQL_USER: dbuser
-      #MYSQL_PASSWORD: dbuser
-      #MYSQL_DATABASE: store
-    #volumes:
-    #  - ./conf.d/:/etc/mysql/conf.d
-    #  - ./initdb/:/docker-entrypoint-initdb.d
-    #- datastore:/var/lib/mariadb
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbuser
+      MYSQL_DATABASE: store
+    command: --innodb-use-native-aio=0
+    volumes:
+      - ./conf.d/:/etc/mysql/conf.d
+      - ./initdb/:/docker-entrypoint-initdb.d
+      - datastore:/var/lib/mariadb
     ports:
       - "23306:3306"
     networks:
@@ -40,6 +41,8 @@ services:
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - default
 
 volumes:
   workdir:
