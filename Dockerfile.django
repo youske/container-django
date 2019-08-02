@@ -1,5 +1,6 @@
 FROM amazonlinux:2
-RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags \
+RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags unzip bzip2 zip pigz \
+    bind-utils traceroute lsof tmpwatch diffutils nc \
     gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel python-devel mariadb-devel && \
     groupadd appcreators && groupadd appadmin
 
@@ -18,7 +19,6 @@ RUN  ENTRYKIT_VERSION=0.4.0 && \
 # SQLite3 ver 3.28.0
 RUN wget -qO - https://www.sqlite.org/2019/sqlite-autoconf-3280000.tar.gz | tar zxvf - -C /tmp/ && \
     cd /tmp/sqlite-autoconf-3280000 && ./configure --prefix=/usr/local && make && make install && find /usr/ -name sqlite3
-
 
 RUN adduser admin -g appadmin -g appcreators && \
     adduser appuser -g appcreators && \

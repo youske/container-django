@@ -14,26 +14,70 @@ services:
       - 8000:8000
     networks:
       - default
+      - development
 
-  mariadb:
-    container_name: mariadb
-    image: mariadb
-    restart: always
+  user1db:
+    container_name: user1db
+    image: mysql:5.7
     environment:
-      COMPOSE_CONVERT_WINDOWS_PATHS: 1
-      MYSQL_ROOT_PASSWORD: mysecrethoge
+      MYSQL_ROOT_PASSWORD: mysecret
       MYSQL_USER: dbuser
       MYSQL_PASSWORD: dbuser
-      MYSQL_DATABASE: store
+      MYSQL_DATABASE: user1
     command: --innodb-use-native-aio=0
     volumes:
       - ./conf.d/:/etc/mysql/conf.d
       - ./initdb/:/docker-entrypoint-initdb.d
-      - datastore:/var/lib/mariadb
+      - userdb1store:/var/lib/mysql
+
+  user2db:
+    container_name: user2db
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecret
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbuser
+      MYSQL_DATABASE: user2
+    command: --innodb-use-native-aio=0
+    volumes:
+      - ./conf.d/:/etc/mysql/conf.d
+      - ./initdb/:/docker-entrypoint-initdb.d
+      - userdb2store:/var/lib/mysql
+
+  fixdb:
+    container_name: fixdb
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecret
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbuser
+      MYSQL_DATABASE: fixdb
+    command: --innodb-use-native-aio=0
+    volumes:
+      - ./conf.d/:/etc/mysql/conf.d
+      - ./initdb/:/docker-entrypoint-initdb.d
+      - fixdbstore:/var/lib/mysql
+
+  mariadb:
+    container_name: defaultdb
+    image: mysql:5.7
+    #restart: always
+    environment:
+      COMPOSE_CONVERT_WINDOWS_PATHS: 1
+      MYSQL_ROOT_PASSWORD: mysecret
+      MYSQL_USER: dbuser
+      MYSQL_PASSWORD: dbuser
+      MYSQL_DATABASE: tigui
+    command: --innodb-use-native-aio=0
+    volumes:
+      - ./conf.d/:/etc/mysql/conf.d
+      - ./initdb/:/docker-entrypoint-initdb.d
+      - datastore:/var/lib/mysql
     ports:
       - "23306:3306"
     networks:
       - default
+      - development
 
   adminer:
     container_name: adminer
@@ -43,6 +87,7 @@ services:
       - 8080:8080
     networks:
       - default
+      - development
 
 volumes:
   workdir:
@@ -55,3 +100,22 @@ volumes:
       type: none
       device: /c/Users/$USERNAME/volumes/datastore
       o: bind
+  userdb1store:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/userdb1store
+      o: bind
+  userdb2store:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/userdb2store
+      o: bind
+  fixdbstore:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/fixdbstore
+      o: bind
+
+networks:
+  development:
+    external: true
