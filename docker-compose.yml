@@ -89,6 +89,21 @@ services:
       - default
       - development
 
+  minio:
+    container_name: minio
+    image: minio/minio
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio
+    command: server http://minio{1...4}/export
+    volumes:
+      - s3store:/export
+    ports:
+      - "9000:9000"
+    networks:
+      - default
+      - development
+
 volumes:
   workdir:
     driver_opts:
@@ -114,6 +129,11 @@ volumes:
     driver_opts:
       type: none
       device: /c/Users/$USERNAME/volumes/fixdbstore
+      o: bind
+  s3store:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/s3store
       o: bind
 
 networks:
