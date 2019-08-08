@@ -1,8 +1,15 @@
 FROM amazonlinux:2
+
 RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags unzip bzip2 zip pigz \
+    yum-utils \
     bind-utils traceroute lsof tmpwatch diffutils nc \
     gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel python-devel mariadb-devel && \
     groupadd appcreators && groupadd appadmin
+
+# mysql commynity 8 -> 5.7
+RUN yum localinstall https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm -y && \
+  yum-config-manager --disable mysql80-community && \
+  yum-config-manager --enable mysql57-community
 
 ## confd
 RUN mkdir -p /etc/confd/{conf.d,templates} && \
