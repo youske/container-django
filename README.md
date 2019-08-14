@@ -28,3 +28,16 @@ linux
 ```
  $HOME/<pathto>
 ```
+
+mysql
+
+
+redis
+
+
+minii
+
+
+
+
+
