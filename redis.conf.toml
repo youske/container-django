@@ -1,0 +1,8 @@
+[template]
+src = "redis.conf.tmpl"
+dest = "/etc/redis.conf"
+keys = [
+      "REDIS_MAXCLIENT",
+      "REDIS_MAXMEMORY"
+]
+reload_cmd = 'redis-server /etc/redis.conf'

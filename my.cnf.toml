@@ -1,0 +1,7 @@
+[template]
+src = "my.cnf.tmpl"
+dest = "/etc/my.cnf"
+keys = [
+    "TEST_ENV"
+]
+#reload_cmd = 'sudo /usr/sbin/crond'

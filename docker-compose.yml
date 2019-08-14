@@ -16,6 +16,22 @@ services:
       - default
       - development
 
+  redis:
+    container_name: redis
+    build:
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - "REDIS_MAXCLIENT=3000"
+      - "REDIS_MAXMEMORY=32mb"
+    ports:
+      - "6379:6379"
+    command: /usr/local/bin/confd -backend env
+    volumes:
+      #- ./conf.d/:/etc/mysql/conf.d
+      #- ./initdb/:/docker-entrypoint-initdb.d
+      - redisstore:/data
+
   user1db:
     container_name: user1db
     image: mysql:5.7
@@ -29,20 +45,6 @@ services:
       - ./conf.d/:/etc/mysql/conf.d
       - ./initdb/:/docker-entrypoint-initdb.d
       - userdb1store:/var/lib/mysql
-
-  user2db:
-    container_name: user2db
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: mysecret
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: dbuser
-      MYSQL_DATABASE: user2
-    command: --innodb-use-native-aio=0
-    volumes:
-      - ./conf.d/:/etc/mysql/conf.d
-      - ./initdb/:/docker-entrypoint-initdb.d
-      - userdb2store:/var/lib/mysql
 
   fixdb:
     container_name: fixdb
@@ -120,10 +122,10 @@ volumes:
       type: none
       device: /c/Users/$USERNAME/volumes/userdb1store
       o: bind
-  userdb2store:
+  redisstore:
     driver_opts:
       type: none
-      device: /c/Users/$USERNAME/volumes/userdb2store
+      device: /c/Users/$USERNAME/volumes/redisstore
       o: bind
   fixdbstore:
     driver_opts:
