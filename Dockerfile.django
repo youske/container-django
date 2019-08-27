@@ -8,15 +8,17 @@ RUN yum install -y yum-utils && \
 
 RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags unzip bzip2 zip pigz \
     bind-utils traceroute lsof tmpwatch diffutils nc \
-    gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel python-devel mysql-community-devel && \
-    groupadd appcreators && groupadd appadmin
+    gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel python-devel mysql-community-devel \
+    awscli
+
+RUN groupadd appcreators && groupadd appadmin
 
 ## confd
 RUN mkdir -p /etc/confd/{conf.d,templates} && \
     wget -q "https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64" -O /usr/local/bin/confd && \
     chmod +x /usr/local/bin/confd
-COPY *.toml /etc/confd/conf.d/
-COPY *.tmpl /etc/confd/templates/
+COPY ./start.toml /etc/confd/conf.d/
+COPY ./start.tmpl /etc/confd/templates/
 
 ## entrykit
 RUN  ENTRYKIT_VERSION=0.4.0 && \

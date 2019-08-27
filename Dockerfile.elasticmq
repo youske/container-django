@@ -1,0 +1,17 @@
+FROM s12v/elasticmq
+
+#RUN groupadd appcreators && groupadd appadmin
+
+## confd
+RUN mkdir -p /etc/confd/{conf.d,templates} && \
+    wget -q "https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64" -O /usr/local/bin/confd && \
+    chmod +x /usr/local/bin/confd
+COPY ./elasticmq.conf.toml /etc/confd/conf.d/
+COPY ./elasticmq.conf.tmpl /etc/confd/templates/
+
+#RUN adduser appuser -g appcreators && \
+#    #adduser admin -g appadmin -g appcreators && \
+#    echo "%appcreators ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/appcreators && \
+#    ### worrking dir
+#    mkdir -p /work && chown admin:appcreators /work && chmod g+rwx /work
+
