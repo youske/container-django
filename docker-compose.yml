@@ -11,9 +11,7 @@ services:
     volumes:
       - "workdir:/work:rw"
     ports:
-      - 8000:8000
-      - 8001:8001
-      - 8002:8002
+      - 8000-8004:8000-8004
     networks:
       - default
       - development
