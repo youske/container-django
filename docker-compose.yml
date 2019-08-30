@@ -32,33 +32,35 @@ services:
       #- ./initdb/:/docker-entrypoint-initdb.d
       - redisstore:/data
 
-  user1db:
-    container_name: user1db
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: mysecret
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: dbuser
-      MYSQL_DATABASE: user1
-    command: --innodb-use-native-aio=0
-    volumes:
-      - ./conf.d/:/etc/mysql/conf.d
-      - ./initdb/:/docker-entrypoint-initdb.d
-      - userdb1store:/var/lib/mysql
+  #user1db:
+  #  container_name: user1db
+  ##  image: mysql:5.7
+  #  environment:
+  #    COMPOSE_CONVERT_WINDOWS_PATHS: 1
+  #    MYSQL_ROOT_PASSWORD: mysecret
+  #    MYSQL_USER: dbuser
+  #    MYSQL_PASSWORD: dbuser
+  #    MYSQL_DATABASE: user1
+  #  command: --innodb-use-native-aio=0
+  #  volumes:
+  #    - ./conf.d/:/etc/mysql/conf.d
+  #    - ./initdb/:/docker-entrypoint-initdb.d
+  #    - userdb1store:/var/lib/mysql
 
-  fixdb:
-    container_name: fixdb
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: mysecret
-      MYSQL_USER: dbuser
-      MYSQL_PASSWORD: dbuser
-      MYSQL_DATABASE: fixdb
-    command: --innodb-use-native-aio=0
-    volumes:
-      - ./conf.d/:/etc/mysql/conf.d
-      - ./initdb/:/docker-entrypoint-initdb.d
-      - fixdbstore:/var/lib/mysql
+  #fixdb:
+  #  container_name: fixdb
+  #  image: mysql:5.7
+  #  environment:
+  #    COMPOSE_CONVERT_WINDOWS_PATHS: 1
+  #    MYSQL_ROOT_PASSWORD: mysecret
+  #    MYSQL_USER: dbuser
+  #    MYSQL_PASSWORD: dbuser
+  #    MYSQL_DATABASE: fixdb
+  #  command: --innodb-use-native-aio=0
+  #  volumes:
+  #    - ./conf.d/:/etc/mysql/conf.d
+  #    - ./initdb/:/docker-entrypoint-initdb.d
+  #    - fixdbstore:/var/lib/mysql
 
   mariadb:
     container_name: defaultdb
@@ -106,6 +108,22 @@ services:
       - default
       - development
 
+  emq:
+    container_name: emq
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticmq
+    command: /usr/local/bin/confd -backend env
+    environment:
+      ELASTICMQ_SERVICE_PORT: 9324
+    volumes:
+      - mqstore:/export
+    ports:
+      - "9324:9324"
+    networks:
+      - default
+      - development
+
 volumes:
   workdir:
     driver_opts:
@@ -136,6 +154,11 @@ volumes:
     driver_opts:
       type: none
       device: /c/Users/$USERNAME/volumes/s3store
+      o: bind
+  mqstore:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/mqstore
       o: bind
 
 networks:

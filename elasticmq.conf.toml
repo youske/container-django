@@ -1,0 +1,7 @@
+[template]
+src = "elasticmq.conf.tmpl"
+dest = "/etc/elasticmq/elasticmq.conf"
+keys = [
+  "ELASTICMQ_SERVICE_PORT"
+]
+reload_cmd = 'java -Djava.net.preferIPv4Stack=true -Dconfig.file=/etc/elasticmq/elasticmq.conf -jar /elasticmq-server.jar'
