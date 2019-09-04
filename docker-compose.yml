@@ -18,6 +18,44 @@ services:
       - default
       - development
 
+  scheduler:
+    container_name: scheduler
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    environment:
+      - "TZ=Asia/Tokyo"
+      - "WORKER=1"
+    volumes:
+      - "workdir:/work:rw"
+    ports:
+      - 8100:8000
+      - 8101:8001
+      - 8102:8002
+    networks:
+      - default
+      - development
+
+  adhoc:
+    container_name: adhoc
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    environment:
+      - "TZ=Asia/Tokyo"
+      - "WORKER=1"
+    volumes:
+      - "workdir:/work:rw"
+    ports:
+      - 8200:8000
+      - 8201:8001
+      - 8202:8002
+    networks:
+      - default
+      - development
+
+
+
   redis:
     container_name: redis
     build:
@@ -28,7 +66,7 @@ services:
       - "REDIS_MAXMEMORY=32mb"
     ports:
       - "6379:6379"
-    command: /usr/local/bin/confd -backend env
+    command: confd -backend env
     volumes:
       #- ./conf.d/:/etc/mysql/conf.d
       #- ./initdb/:/docker-entrypoint-initdb.d
@@ -64,7 +102,7 @@ services:
   #    - ./initdb/:/docker-entrypoint-initdb.d
   #    - fixdbstore:/var/lib/mysql
 
-  mariadb:
+  defaultdb:
     container_name: defaultdb
     image: mysql:5.7
     #restart: always

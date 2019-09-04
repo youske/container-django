@@ -11,6 +11,11 @@ RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags un
     gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel python-devel mysql-community-devel \
     awscli
 
+RUN curl -L https://pkg.osquery.io/rpm/GPG | sudo tee /etc/pki/rpm-gpg/RPM-GPG-KEY-osquery && \
+    yum-config-manager --add-repo https://pkg.osquery.io/rpm/osquery-s3-rpm.repo && \
+    yum-config-manager --enable osquery-s3-rpm && \
+    yum install -y osquery
+
 RUN groupadd appcreators && groupadd appadmin
 
 ## confd
