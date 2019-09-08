@@ -11,6 +11,7 @@ RUN yum install -y sudo tar git wget curl less gawk cronie procps-ng jq ctags un
     gcc make automake autoconf zlib-devel libffi-devel openssl-devel bzip2-devel readline-devel python-devel mysql-community-devel \
     awscli
 
+## osquery
 RUN curl -L https://pkg.osquery.io/rpm/GPG | sudo tee /etc/pki/rpm-gpg/RPM-GPG-KEY-osquery && \
     yum-config-manager --add-repo https://pkg.osquery.io/rpm/osquery-s3-rpm.repo && \
     yum-config-manager --enable osquery-s3-rpm && \
@@ -41,20 +42,58 @@ RUN adduser admin -g appadmin -g appcreators && \
     mkdir -p /work && chown admin:appcreators /work && chmod g+rwx /work
 
 USER admin
+ADD anyenv.exports /home/admin/.anyenv.exports
 ADD pyenv.exports /home/admin/.pyenv.exports
-RUN git clone https://github.com/yyuu/pyenv.git ~/.pyenv && \
-  sudo chown admin:appcreators /home/admin/.pyenv.exports && \
-  echo "source ~/.pyenv.exports" >> /home/admin/.bash_profile && \
-  echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> /home/admin/.bash_profile && \
-  source ~/.bash_profile && pyenv install $PYENV_INSTALL_VERSION
+ADD nodeenv.exports /home/admin/.nodeenv.exports
+RUN git clone https://github.com/riywo/anyenv ~/.anyenv && \
+  mkdir -p ~/.anyenv/plugins && \
+  git clone https://github.com/znz/anyenv-update.git ~/.anyenv/plugins/anyenv-update && \
+  sudo chown admin:appcreators ~/.anyenv.exports && \
+  echo "source ~/.anyenv.exports" >> ~/.bash_profile && \
+  echo "source ~/.pyenv.exports" >> ~/.bash_profile && \
+  echo "source ~/.nodeenv.exports" >> ~/.bash_profile && \
+  source ~/.bash_profile && yes | anyenv install --init
+RUN . ~/.bash_profile && \
+  anyenv install pyenv && sudo ~/.anyenv/envs/pyenv/plugins/python-build/install.sh && anyenv install nodenv
+
+#RUN source ~/.bash_profile && anyenv install ndenv && \
+#  ndenv install $NODEENV_INSTALL_VERSION
+#  sudo chown admin:appcreators ~/.pyenv.exports && \
+#  echo "source ~/.pyenv.exports" >> ~/.bash_profile && \
+#  echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bash_profile && \
+#  source ~/.bash_profile && pyenv install $PYENV_INSTALL_VERSION
+
+#RUN git clone git://github.com/nodenv/nodenv.git ~/.nodenv && \
+#  sudo chown admin:appcreators ~/.nodeenv.exports && \
+#  echo "source ~/.nodeenv.exports" >> ~/.bash_profile && \
+#  source ~/.bash_profile
+#  #&& nodeenv install $NODEENV_INSTALL_VERSION && nodeenv rehash
 
 USER appuser
+ADD anyenv.exports /home/appuser/.anyenv.exports
 ADD pyenv.exports /home/appuser/.pyenv.exports
-RUN git clone https://github.com/yyuu/pyenv.git ~/.pyenv && \
-  sudo chown appuser:appcreators /home/appuser/.pyenv.exports && \
-  echo "source ~/.pyenv.exports" >> /home/appuser/.bash_profile && \
-  echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> /home/appuser/.bash_profile && \
-  source ~/.bash_profile && pyenv install $PYENV_INSTALL_VERSION
+ADD nodeenv.exports /home/appuser/.nodeenv.exports
+RUN git clone https://github.com/riywo/anyenv ~/.anyenv && \
+  mkdir -p ~/.anyenv/plugins && \
+  git clone https://github.com/znz/anyenv-update.git ~/.anyenv/plugins/anyenv-update && \
+  sudo chown appuser:appcreators ~/.anyenv.exports && \
+  echo "source ~/.anyenv.exports" >> ~/.bash_profile && \
+  echo "source ~/.pyenv.exports" >> ~/.bash_profile && \
+  echo "source ~/.nodeenv.exports" >> ~/.bash_profile && \
+  source ~/.bash_profile && yes | anyenv install --init
+RUN . ~/.bash_profile && \
+  anyenv install pyenv && sudo ~/.anyenv/envs/pyenv/plugins/python-build/install.sh && anyenv install nodenv
+
+
+  #pyenv install $PYENV_INSTALL_VERSION && \
+#RUN  . ~/.bash_profile && nodenv install $NODEENV_INSTALL_VERSION
+
+#RUN git clone https://github.com/yyuu/pyenv.git ~/.pyenv && \
+#  sudo chown appuser:appcreators ~/.pyenv.exports && \
+#  echo "source ~/.pyenv.exports" >> ~/.bash_profile && \
+#  echo "export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH" >> ~/.bash_profile && \
+#  source ~/.bash_profile && pyenv install $PYENV_INSTALL_VERSION
+
 
 USER root
 WORKDIR /work
