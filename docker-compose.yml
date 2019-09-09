@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile.django
     environment:
       - "TZ=Asia/Tokyo"
-      - "WORKER=1"
+      - "WORKER=2"
     volumes:
       - "workdir:/work:rw"
     ports:
@@ -41,7 +41,7 @@ services:
       dockerfile: Dockerfile.django
     environment:
       - "TZ=Asia/Tokyo"
-      - "WORKER=1"
+      - "WORKER=2"
     volumes:
       - "workdir:/work:rw"
     ports:
@@ -51,8 +51,6 @@ services:
     networks:
       - default
       - development
-
-
 
   redis:
     container_name: redis

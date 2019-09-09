@@ -76,3 +76,10 @@ django-project の配置
 
 django container では pyenv をインストールしている python3.7.2
 必要に応じて python を pyenv 経由でインストールする
+
+
+## anyenv.exports
+
+anyenvを導入しているので利用するenvを導入
+$> anyenv install -l
+$> anyenv install <**>env
