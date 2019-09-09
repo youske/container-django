@@ -1,3 +1,6 @@
+export PYENV_INSTALL_VERSION=3.7.2
+export NODEENV_INSTALL_VERSION=12.6.0
+
 export ANYENV_ROOT=$HOME/.anyenv
 export PATH="$ANYENV_ROOT/bin:$PATH"
 eval "$(anyenv init -)"

@@ -71,22 +71,21 @@ RUN . ~/.bash_profile && \
 
 USER appuser
 ADD anyenv.exports /home/appuser/.anyenv.exports
-ADD pyenv.exports /home/appuser/.pyenv.exports
-ADD nodeenv.exports /home/appuser/.nodeenv.exports
 RUN git clone https://github.com/riywo/anyenv ~/.anyenv && \
   mkdir -p ~/.anyenv/plugins && \
   git clone https://github.com/znz/anyenv-update.git ~/.anyenv/plugins/anyenv-update && \
-  sudo chown appuser:appcreators ~/.anyenv.exports && \
+#  sudo chown appuser:appcreators ~/.anyenv.exports && \
   echo "source ~/.anyenv.exports" >> ~/.bash_profile && \
-  echo "source ~/.pyenv.exports" >> ~/.bash_profile && \
-  echo "source ~/.nodeenv.exports" >> ~/.bash_profile && \
+#  echo "source ~/.pyenv.exports" >> ~/.bash_profile && \
+#  echo "source ~/.nodeenv.exports" >> ~/.bash_profile && \
   source ~/.bash_profile && yes | anyenv install --init
 RUN . ~/.bash_profile && \
-  anyenv install pyenv && sudo ~/.anyenv/envs/pyenv/plugins/python-build/install.sh && anyenv install nodenv
+  anyenv install pyenv && sudo ~/.anyenv/envs/pyenv/plugins/python-build/install.sh && \
+  anyenv install nodenv && touch ~/.anyenv/envs/nodenv/default-packages
 
 
   #pyenv install $PYENV_INSTALL_VERSION && \
-#RUN  . ~/.bash_profile && nodenv install $NODEENV_INSTALL_VERSION
+RUN  . ~/.bash_profile && nodenv install $NODEENV_INSTALL_VERSION
 
 #RUN git clone https://github.com/yyuu/pyenv.git ~/.pyenv && \
 #  sudo chown appuser:appcreators ~/.pyenv.exports && \
