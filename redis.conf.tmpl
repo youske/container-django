@@ -5,7 +5,7 @@
 
 bind 0.0.0.0
 protected-mode no
-port 6379
+port {{getenv "REDIS_SERVICE_PORT"}}
 tcp-backlog 511
 
 unixsocket /tmp/redis.sock
@@ -36,7 +36,7 @@ logfile ""
 # Set the number of databases. The default database is DB 0, you can select
 # a different one on a per-connection basis using SELECT <dbid> where
 # dbid is a number between 0 and 'databases'-1
-databases 16
+databases {{getenv "REDIS_DATABASECOUNT"}}
 
 # By default Redis shows an ASCII art logo only when started to log to the
 # standard output and if the standard output is a TTY. Basically this means

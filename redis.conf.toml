@@ -2,7 +2,9 @@
 src = "redis.conf.tmpl"
 dest = "/etc/redis.conf"
 keys = [
+      "REDIS_SERVICE_PORT",
+      "REDIS_DATABASECOUNT",
       "REDIS_MAXCLIENT",
       "REDIS_MAXMEMORY"
 ]
-reload_cmd = 'redis-server /etc/redis.conf'
+reload_cmd = '/usr/local/bin/redis-server /etc/redis.conf'

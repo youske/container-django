@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile.django
     environment:
       - "TZ=Asia/Tokyo"
+      - "LANGUAGE=ja"
       - "TEST_ENV=1"
     volumes:
       - "workdir:/work:rw"
@@ -27,9 +28,7 @@ services:
     volumes:
       - "workdir:/work:rw"
     ports:
-      - 8100:8000
-      - 8101:8001
-      - 8102:8002
+      - 8100-8104:8100-8104
     networks:
       - default
       - development
@@ -45,9 +44,7 @@ services:
     volumes:
       - "workdir:/work:rw"
     ports:
-      - 8200:8000
-      - 8201:8001
-      - 8202:8002
+      - 8200-8204:8200-8204
     networks:
       - default
       - development
@@ -58,8 +55,11 @@ services:
       context: .
       dockerfile: Dockerfile.redis
     environment:
-      - "REDIS_MAXCLIENT=3000"
+      - "REDIS_SERVICE_PORT=6379"
+      - "REDIS_KEEPALIVE_TIME=300"
+      - "REDIS_MAXCLIENT=2500"
       - "REDIS_MAXMEMORY=32mb"
+      - "REDIS_DATABASECOUNT=8"
     ports:
       - "6379:6379"
     command: confd -backend env
@@ -83,20 +83,20 @@ services:
   #    - ./initdb/:/docker-entrypoint-initdb.d
   #    - userdb1store:/var/lib/mysql
 
-  #fixdb:
-  #  container_name: fixdb
-  #  image: mysql:5.7
-  #  environment:
-  #    COMPOSE_CONVERT_WINDOWS_PATHS: 1
-  #    MYSQL_ROOT_PASSWORD: mysecret
-  #    MYSQL_USER: dbuser
-  #    MYSQL_PASSWORD: dbuser
-  #    MYSQL_DATABASE: fixdb
-  #  command: --innodb-use-native-aio=0
-  #  volumes:
-  #    - ./conf.d/:/etc/mysql/conf.d
-  #    - ./initdb/:/docker-entrypoint-initdb.d
-  #    - fixdbstore:/var/lib/mysql
+  cassandra:
+    container_name: cassandra
+    image: cassandra:latest
+    environment:
+      COMPOSE_CONVERT_WINDOWS_PATHS: 1
+      #CASSANDRA_LISTEN_ADDRESS: mysecret
+      #CASSANDRA_BROADCAST_ADDRESS: dbuser
+      #CASSANDRA_RACK: dbuser
+      #CASSANDRA_SEEDS: fixdb
+    #command: --innodb-use-native-aio=0
+    volumes:
+      #- ./conf.d/:/etc/mysql/conf.d
+      #- ./initdb/:/docker-entrypoint-initdb.d
+      - cassandrastore:/var/lib/cassandra
 
   defaultdb:
     container_name: defaultdb
@@ -185,6 +185,11 @@ volumes:
     driver_opts:
       type: none
       device: /c/Users/$USERNAME/volumes/fixdbstore
+      o: bind
+  cassandrastore:
+    driver_opts:
+      type: none
+      device: /c/Users/$USERNAME/volumes/cassandrastore
       o: bind
   s3store:
     driver_opts:
