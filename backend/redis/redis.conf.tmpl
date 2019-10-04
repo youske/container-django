@@ -6,12 +6,12 @@
 bind 0.0.0.0
 protected-mode no
 port {{getenv "REDIS_SERVICE_PORT"}}
-tcp-backlog 511
+tcp-backlog {{getenv "REDIS_TCP_BACKLOG"}}
 
 unixsocket /tmp/redis.sock
 unixsocketperm 700
-timeout 0
-tcp-keepalive 300
+timeout {{getenv "REDIS_TIMEOUT"}}
+tcp-keepalive {{getenv "REDIS_KEEPALIVE_TIME"}}
 
 daemonize no
 
@@ -19,7 +19,7 @@ supervised no
 
 pidfile /var/run/redis_6379.pid
 
-loglevel notice
+loglevel {{getenv "REDIS_DEBUG_LEVEL"}}
 
 logfile ""
 

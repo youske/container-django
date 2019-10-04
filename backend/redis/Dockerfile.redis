@@ -9,3 +9,5 @@ RUN mkdir -p /etc/confd/{conf.d,templates} && \
 
 COPY ./redis.conf.toml /etc/confd/conf.d/
 COPY ./redis.conf.tmpl /etc/confd/templates/
+
+COPY ./redis_sysctl.conf /etc/sysctl.d/

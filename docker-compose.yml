@@ -3,7 +3,7 @@ services:
   django:
     container_name: django
     build:
-      context: .
+      context: ./frontend/app
       dockerfile: Dockerfile.django
     environment:
       - "TZ=Asia/Tokyo"
@@ -20,7 +20,7 @@ services:
   scheduler:
     container_name: scheduler
     build:
-      context: .
+      context: ./frontend/app
       dockerfile: Dockerfile.django
     environment:
       - "TZ=Asia/Tokyo"
@@ -36,7 +36,7 @@ services:
   adhoc:
     container_name: adhoc
     build:
-      context: .
+      context: ./frontend/app
       dockerfile: Dockerfile.django
     environment:
       - "TZ=Asia/Tokyo"
@@ -52,17 +52,21 @@ services:
   redis:
     container_name: redis
     build:
-      context: .
+      context: ./backend/redis
       dockerfile: Dockerfile.redis
     environment:
+      - "REDIS_DEBUG_LEVEL=notice"
       - "REDIS_SERVICE_PORT=6379"
       - "REDIS_KEEPALIVE_TIME=300"
-      - "REDIS_MAXCLIENT=2500"
-      - "REDIS_MAXMEMORY=32mb"
+      - "REDIS_TIMEOUT=600"
+      - "REDIS_TCP_BACKLOG=255"
+      - "REDIS_MAXCLIENT=1500"
+      - "REDIS_MAXMEMORY=24mb"
       - "REDIS_DATABASECOUNT=8"
     ports:
       - "6379:6379"
     command: confd -backend env
+    #command: tail -f /dev/null
     volumes:
       #- ./conf.d/:/etc/mysql/conf.d
       #- ./initdb/:/docker-entrypoint-initdb.d
@@ -100,8 +104,9 @@ services:
 
   defaultdb:
     container_name: defaultdb
-    image: mysql:5.7
-    #restart: always
+    build:
+      context: ./backend/mysql
+      dockerfile: Dockerfile.mysql
     environment:
       COMPOSE_CONVERT_WINDOWS_PATHS: 1
       MYSQL_ROOT_PASSWORD: mysecret
@@ -110,8 +115,8 @@ services:
       MYSQL_DATABASE: tigui
     command: --innodb-use-native-aio=0
     volumes:
-      - ./conf.d/:/etc/mysql/conf.d
-      - ./initdb/:/docker-entrypoint-initdb.d
+      - ./backend/mysql/conf.d/:/etc/mysql/conf.d
+      - ./backend/mysql/initdb/:/docker-entrypoint-initdb.d
       - datastore:/var/lib/mysql
     ports:
       - "23306:3306"
@@ -147,7 +152,7 @@ services:
   emq:
     container_name: emq
     build:
-      context: .
+      context: ./backend/elasticmq
       dockerfile: Dockerfile.elasticmq
     command: /usr/local/bin/confd -backend env
     environment:
