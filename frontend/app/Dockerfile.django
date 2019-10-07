@@ -42,6 +42,7 @@ RUN adduser admin -g appadmin -g appcreators && \
     mkdir -p /work && chown admin:appcreators /work && chmod g+rwx /work
 
 USER admin
+ADD dot.my.cnf /home/admin/.my.cnf
 ADD anyenv.exports /home/admin/.anyenv.exports
 RUN git clone https://github.com/riywo/anyenv ~/.anyenv && \
   mkdir -p ~/.anyenv/plugins && \
@@ -58,6 +59,7 @@ RUN . ~/.bash_profile && nodenv install $NODEENV_INSTALL_VERSION && \
     pyenv install $PYENV_INSTALL_VERSION
 
 USER appuser
+ADD dot.my.cnf /home/appuser/.my.cnf
 ADD anyenv.exports /home/appuser/.anyenv.exports
 RUN git clone https://github.com/riywo/anyenv ~/.anyenv && \
   mkdir -p ~/.anyenv/plugins && \

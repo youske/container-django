@@ -11,10 +11,18 @@ amazonlinux2 をベースにした django 開発環境
 
 ## セットアップ方法
 
+docker network を利用しているため docker command を利用して network を作成しておく
+
+```
+$> docker network create development
+```
+
 ```
 $> git clone https://xxx.git
 $> cd xxx
 $> docker-compose up -d --build
+
+実行ユーザを指定してdjango実行サーバに接続する
 $> docker-compose exec django runuser -l appuser
 ```
 
@@ -77,9 +85,8 @@ django-project の配置
 django container では pyenv をインストールしている python3.7.2
 必要に応じて python を pyenv 経由でインストールする
 
-
 ## anyenv.exports
 
-anyenvを導入しているので利用するenvを導入
+anyenv を導入しているので利用する env を導入
 $> anyenv install -l
-$> anyenv install <**>env
+$> anyenv install <\*\*>env
